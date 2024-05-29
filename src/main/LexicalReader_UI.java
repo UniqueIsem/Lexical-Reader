@@ -3,6 +3,7 @@ package main;
 import components.ChooseFile;
 import components.LineNumber;
 import components.TextFileReader;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -33,6 +34,7 @@ public class LexicalReader_UI extends javax.swing.JFrame {
         txtPaneCode = new javax.swing.JTextPane();
         scrollTerminal = new javax.swing.JScrollPane();
         txtPaneTerminal = new javax.swing.JTextPane();
+        btnRunProject = new javax.swing.JLabel();
         mnuBar = new javax.swing.JMenuBar();
         mnuFile = new javax.swing.JMenu();
         mnuItemnewFile = new javax.swing.JMenuItem();
@@ -60,6 +62,16 @@ public class LexicalReader_UI extends javax.swing.JFrame {
         txtPaneTerminal.setForeground(new java.awt.Color(204, 204, 204));
         scrollTerminal.setViewportView(txtPaneTerminal);
 
+        btnRunProject.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/run.png"))); // NOI18N
+        btnRunProject.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnRunProjectMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnRunProjectMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlContainerLayout = new javax.swing.GroupLayout(pnlContainer);
         pnlContainer.setLayout(pnlContainerLayout);
         pnlContainerLayout.setHorizontalGroup(
@@ -69,7 +81,9 @@ public class LexicalReader_UI extends javax.swing.JFrame {
                 .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlContainerLayout.createSequentialGroup()
                         .addComponent(scrollCode, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 210, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRunProject)
+                        .addGap(0, 172, Short.MAX_VALUE))
                     .addComponent(scrollTerminal))
                 .addContainerGap())
         );
@@ -77,11 +91,15 @@ public class LexicalReader_UI extends javax.swing.JFrame {
             pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlContainerLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(scrollCode, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(scrollCode, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnRunProject))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollTerminal, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        mnuBar.setBackground(new java.awt.Color(45, 45, 45));
 
         mnuFile.setText("File");
 
@@ -192,6 +210,14 @@ public class LexicalReader_UI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_mnuItemFontSizeActionPerformed
 
+    private void btnRunProjectMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRunProjectMouseEntered
+        btnRunProject.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_btnRunProjectMouseEntered
+
+    private void btnRunProjectMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRunProjectMouseExited
+        btnRunProject.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_btnRunProjectMouseExited
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -225,6 +251,7 @@ public class LexicalReader_UI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel btnRunProject;
     private javax.swing.JPopupMenu.Separator fileSeparator1;
     private javax.swing.JPopupMenu.Separator fileSeparator2;
     private javax.swing.JMenuBar mnuBar;
