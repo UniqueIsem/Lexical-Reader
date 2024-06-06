@@ -21,8 +21,7 @@ public class LexicalReader_UI extends javax.swing.JFrame {
 
     private void cleanFields() {
         txtPaneCode.setText("");
-        //tableAnalizadorLexico.setModel(new ModeloAnalizadorLexico());
-        //tableResultadoAnalizado.setModel(new ModeloResultadoAnalizado());
+        txtPaneTerminal.setText("");
     }
 
     @SuppressWarnings("unchecked")
@@ -34,7 +33,9 @@ public class LexicalReader_UI extends javax.swing.JFrame {
         txtPaneCode = new javax.swing.JTextPane();
         scrollTerminal = new javax.swing.JScrollPane();
         txtPaneTerminal = new javax.swing.JTextPane();
+        pnlBtnContainer = new javax.swing.JPanel();
         btnRunProject = new javax.swing.JLabel();
+        btnClean = new javax.swing.JLabel();
         mnuBar = new javax.swing.JMenuBar();
         mnuFile = new javax.swing.JMenu();
         mnuItemnewFile = new javax.swing.JMenuItem();
@@ -62,15 +63,52 @@ public class LexicalReader_UI extends javax.swing.JFrame {
         txtPaneTerminal.setForeground(new java.awt.Color(204, 204, 204));
         scrollTerminal.setViewportView(txtPaneTerminal);
 
+        pnlBtnContainer.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                pnlBtnContainerMouseEntered(evt);
+            }
+        });
+
         btnRunProject.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/run.png"))); // NOI18N
         btnRunProject.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnRunProjectMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 btnRunProjectMouseEntered(evt);
             }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnRunProjectMouseExited(evt);
+        });
+
+        btnClean.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/clean.png"))); // NOI18N
+        btnClean.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCleanMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnCleanMouseEntered(evt);
             }
         });
+
+        javax.swing.GroupLayout pnlBtnContainerLayout = new javax.swing.GroupLayout(pnlBtnContainer);
+        pnlBtnContainer.setLayout(pnlBtnContainerLayout);
+        pnlBtnContainerLayout.setHorizontalGroup(
+            pnlBtnContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlBtnContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnRunProject)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnClean)
+                .addContainerGap(122, Short.MAX_VALUE))
+        );
+        pnlBtnContainerLayout.setVerticalGroup(
+            pnlBtnContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlBtnContainerLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlBtnContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnClean, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnRunProject))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout pnlContainerLayout = new javax.swing.GroupLayout(pnlContainer);
         pnlContainer.setLayout(pnlContainerLayout);
@@ -82,8 +120,7 @@ public class LexicalReader_UI extends javax.swing.JFrame {
                     .addGroup(pnlContainerLayout.createSequentialGroup()
                         .addComponent(scrollCode, javax.swing.GroupLayout.PREFERRED_SIZE, 800, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRunProject)
-                        .addGap(0, 172, Short.MAX_VALUE))
+                        .addComponent(pnlBtnContainer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(scrollTerminal))
                 .addContainerGap())
         );
@@ -93,7 +130,7 @@ public class LexicalReader_UI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(pnlContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(scrollCode, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnRunProject))
+                    .addComponent(pnlBtnContainer, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollTerminal, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
                 .addContainerGap())
@@ -210,13 +247,28 @@ public class LexicalReader_UI extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_mnuItemFontSizeActionPerformed
 
-    private void btnRunProjectMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRunProjectMouseEntered
+    private void pnlBtnContainerMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pnlBtnContainerMouseEntered
         btnRunProject.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnClean.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_pnlBtnContainerMouseEntered
+
+    private void btnRunProjectMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRunProjectMouseEntered
+        btnRunProject.setToolTipText("Run Project");
     }//GEN-LAST:event_btnRunProjectMouseEntered
 
-    private void btnRunProjectMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRunProjectMouseExited
-        btnRunProject.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_btnRunProjectMouseExited
+    private void btnRunProjectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRunProjectMouseClicked
+        String text = txtPaneCode.getText();
+        LexicalReader reader = new LexicalReader();
+        reader.startReading(text);
+    }//GEN-LAST:event_btnRunProjectMouseClicked
+
+    private void btnCleanMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCleanMouseEntered
+        btnClean.setToolTipText("Clear Terminal");
+    }//GEN-LAST:event_btnCleanMouseEntered
+
+    private void btnCleanMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCleanMouseClicked
+        txtPaneTerminal.setText("");
+    }//GEN-LAST:event_btnCleanMouseClicked
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -251,6 +303,7 @@ public class LexicalReader_UI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel btnClean;
     private javax.swing.JLabel btnRunProject;
     private javax.swing.JPopupMenu.Separator fileSeparator1;
     private javax.swing.JPopupMenu.Separator fileSeparator2;
@@ -261,6 +314,7 @@ public class LexicalReader_UI extends javax.swing.JFrame {
     private javax.swing.JMenuItem mnuItemFontSize;
     private javax.swing.JMenuItem mnuItemOpenFile;
     private javax.swing.JMenuItem mnuItemnewFile;
+    private javax.swing.JPanel pnlBtnContainer;
     private javax.swing.JPanel pnlContainer;
     private javax.swing.JScrollPane scrollCode;
     private javax.swing.JScrollPane scrollTerminal;

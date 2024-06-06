@@ -5,34 +5,18 @@ import java.util.List;
 import java.util.Scanner;
 
 public class LexicalReader {
+    
+    public final String[] palabraReservada = {"int", "double", "char", "String", "public", "private", "protected", "if", "for", "while"};
+    public final char[] caracterEspecial = {'"', '(', ')', '{', '}', '|', '&', '!', '<', '>', '=', '/', '*', '-', '+', '%'};
 
-    Scanner scanner;
-    private static final String[] PALABRAS_RESERVADAS = {"int", "double", "char", "String", "public", "private", "protected", "if", "for", "while"};
-    private static final char[] SYMBOLS = {';', '(', ')', '{', '}', '=', '!'};
-
-    public LexicalReader() {
-        scanner = new Scanner(System.in);
-        startReading();
-    }
-
-    public void startReading() {
+    public void startReading(String text) {
         while (true) {
-            System.out.print("Ingrese una linea de codigo (o 'exit' para salir): ");
-            String linea = scanner.nextLine();
-
-            if (linea.equalsIgnoreCase("exit")) {
-                System.out.println("Saliendo del programa.");
-                break;
-            }
-
-            String resultado = analyzeLine(linea);
+            String resultado = analyze(text);
             System.out.println(resultado);
         }
-
-        scanner.close();
     }
 
-    private String analyzeLine(String line) {
+    private String analyze(String line) {
         line = line.trim();
 
         if (line.endsWith(";")) {
@@ -64,8 +48,8 @@ public class LexicalReader {
         return "Sintaxis incorrecta o tipo no reconocido";
     }
     
-    private static boolean isType(String token) {
-        for (String palabraReservada : PALABRAS_RESERVADAS) {
+    private boolean isType(String token) {
+        for (String palabraReservada : palabraReservada) {
             if (palabraReservada.equals(token)) {
                 return true;
             }
@@ -73,7 +57,7 @@ public class LexicalReader {
         return false;
     }
 
-    private static boolean isIdentifier(String token) {
+    private boolean isIdentifier(String token) {
         // Un identificador válido empieza con una letra y puede contener letras, dígitos y '_'
         if (token == null || token.isEmpty()) {
             return false;
@@ -89,7 +73,7 @@ public class LexicalReader {
         return true;
     }
 
-    private static boolean isValue(String token) {
+    private boolean isValue(String token) {
         // Simplificación para el ejemplo: acepta números enteros y cadenas entre comillas dobles
         if (token.matches("\\d+")) {
             return true; // Número entero
@@ -98,5 +82,9 @@ public class LexicalReader {
             return true; // Cadena entre comillas dobles
         }
         return false;
+    }
+    
+    public static void main(String[] args) {
+        new LexicalReader();
     }
 }
