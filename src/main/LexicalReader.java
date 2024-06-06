@@ -1,22 +1,145 @@
 package main;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.HashSet;
+import java.util.Set;
 
 public class LexicalReader {
     
-    public final String[] palabraReservada = {"int", "double", "char", "String", "public", "private", "protected", "if", "for", "while"};
-    public final char[] caracterEspecial = {'"', '(', ')', '{', '}', '|', '&', '!', '<', '>', '=', '/', '*', '-', '+', '%'};
+    private Set<String> keywords;
+    private Set<Character> specialChar;
+    int palReservada, identificador, opRelacional, opLogico, opAritmetico, asignacion,
+            numEntero, numDecimal, incremento, decremento, cadena, comentario, comentarioLinea,
+            parentesis, llaves, errores;
+    public String result;
 
-    public void startReading(String text) {
-        while (true) {
-            String resultado = analyze(text);
-            System.out.println(resultado);
-        }
+    public LexicalReader() {
+        initKeywords();
+        initSpecialCharacters();
+    }
+    
+    private void initKeywords() {
+        keywords = new HashSet<>();
+        keywords.add("int");
+        keywords.add("double");
+        keywords.add("char");
+        keywords.add("String");
+        keywords.add("public");
+        keywords.add("private");
+        keywords.add("protected");
+        keywords.add("if");
+        keywords.add("switch");
+        keywords.add("case");
+        keywords.add("default");
+        keywords.add("for");
+        keywords.add("break");
+        keywords.add("continue");
+        keywords.add("do");
+        keywords.add("while");
+    }
+    
+    private void initSpecialCharacters() {
+        specialChar = new HashSet<>();
+        specialChar.add('"');
+        specialChar.add('(');
+        specialChar.add(')');
+        specialChar.add('{');
+        specialChar.add('}');
+        specialChar.add('|');
+        specialChar.add('&');
+        specialChar.add('!');
+        specialChar.add('<');
+        specialChar.add('>');
+        specialChar.add('=');
+        specialChar.add('/');
+        specialChar.add('*');
+        specialChar.add('-');
+        specialChar.add('+');
+        specialChar.add('%');
     }
 
-    private String analyze(String line) {
+    public void analyze(String text) {
+        int state = 0;
+        StringBuilder token = new StringBuilder();
+
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
+
+            switch (state) {
+                case 0:
+                    if (Character.isLetter(c)) {
+                        state = 1;
+                        token.append(c);
+                    } else if (Character.isDigit(c)) {
+                        state = 2;
+                        token.append(c);
+                    } else if (Character.isWhitespace(c)) {
+                        state = 0;
+                    } else if (specialChar.contains(c)) {
+                        state = 3;
+                        token.append(c);
+                    } else {
+                        System.out.println("Unknown token: " + c);
+                    }
+                    break;
+
+                case 1:
+                    if (Character.isLetterOrDigit(c)) {
+                        token.append(c);
+                    } else {
+                        if (keywords.contains(token.toString())) {
+                            System.out.println("Keyword: " + token.toString());
+                        } else {
+                            System.out.println("Identifier: " + token.toString());
+                        }
+                        token.setLength(0);
+                        state = 0;
+                        i--; // Reanaliza este carácter
+                    }
+                    break;
+
+                case 2:
+                    if (Character.isDigit(c)) {
+                        token.append(c);
+                    } else {
+                        System.out.println("Number: " + token.toString());
+                        token.setLength(0);
+                        state = 0;
+                        i--; // Reanaliza este carácter
+                    }
+                    break;
+
+                case 3:
+                    // Un estado simple para manejar caracteres especiales de un solo carácter
+                    System.out.println("Special character: " + token.toString());
+                    token.setLength(0);
+                    state = 0;
+                    i--; // Reanaliza este carácter
+                    break;
+
+                default:
+                    System.out.println("Invalid state: " + state);
+            }
+        }
+
+        // Manejo de cualquier token remanente al final del texto
+        if (token.length() > 0) {
+            if (state == 1) {
+                if (keywords.contains(token.toString())) {
+                    System.out.println("Keyword: " + token.toString());
+                } else {
+                    System.out.println("Identifier: " + token.toString());
+                }
+            } else if (state == 2) {
+                System.out.println("Number: " + token.toString());
+            } else if (state == 3) {
+                System.out.println("Special character: " + token.toString());
+            }
+        }
+    }
+    
+    
+    
+    /*private String analyze(String line) {
         line = line.trim();
 
         if (line.endsWith(";")) {
@@ -46,10 +169,10 @@ public class LexicalReader {
         }
 
         return "Sintaxis incorrecta o tipo no reconocido";
-    }
+    }*/
     
     private boolean isType(String token) {
-        for (String palabraReservada : palabraReservada) {
+        for (String palabraReservada : keywords) {
             if (palabraReservada.equals(token)) {
                 return true;
             }
@@ -84,7 +207,11 @@ public class LexicalReader {
         return false;
     }
     
-    public static void main(String[] args) {
-        new LexicalReader();
+    private void setResult() {
+        
+    }
+    
+    public String getResult() {
+        return result;
     }
 }
