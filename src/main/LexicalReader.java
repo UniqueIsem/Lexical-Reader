@@ -7,7 +7,7 @@ public class LexicalReader {
     
     private Set<String> keywords;
     private Set<Character> specialChar;
-    int palReservada, identificador, opRelacional, opLogico, opAritmetico, asignacion,
+    private int palReservada, identificador, opRelacional, opLogico, opAritmetico, asignacion,
             numEntero, numDecimal, incremento, decremento, cadena, comentario, comentarioLinea,
             parentesis, llaves, errores;
     public String result;
@@ -65,7 +65,7 @@ public class LexicalReader {
             char c = text.charAt(i);
 
             switch (state) {
-                case 0:
+                case 0: //detects if letter, digit, special char, space or error
                     if (Character.isLetter(c)) {
                         state = 1;
                         token.append(c);
@@ -77,29 +77,41 @@ public class LexicalReader {
                     } else if (specialChar.contains(c)) {
                         state = 3;
                         token.append(c);
+                    } else if (token.isEmpty()) {
+                        state = 4;
                     } else {
                         System.out.println("Unknown token: " + c);
                     }
                     break;
 
-                case 1:
-                    if (Character.isLetterOrDigit(c)) {
+                case 1: //Letters
+                    if (Character.isLetterOrDigit(c) || c == '_') { //keeps iterating chars to get word
                         token.append(c);
-                    } else {
-                        if (keywords.contains(token.toString())) {
+                    } else if (specialChar.contains(c)) { //error detecting special char
+                        errores++;
+                        System.out.println("Error: " + token.toString());
+                    } else { //full word
+                        if (keywords.contains(token.toString())) { //detects a keyword
+                            palReservada++;
                             System.out.println("Keyword: " + token.toString());
-                        } else {
+                        } else { //detects a identifyer
+                            identificador++;
                             System.out.println("Identifier: " + token.toString());
                         }
+                        //reboot when its a space, tab or endline
                         token.setLength(0);
                         state = 0;
-                        i--; // Reanaliza este carácter
+                        i--; //skip space iteration
                     }
                     break;
 
-                case 2:
+                case 2: //Digits
                     if (Character.isDigit(c)) {
                         token.append(c);
+                    } else if (Character.isLetter(c) || specialChar.contains(c)) {
+                        errores++;
+                    } else if (c == '.') {
+                        
                     } else {
                         System.out.println("Number: " + token.toString());
                         token.setLength(0);
@@ -135,80 +147,32 @@ public class LexicalReader {
                 System.out.println("Special character: " + token.toString());
             }
         }
+        
+        setResult();
     }
     
-    
-    
-    /*private String analyze(String line) {
-        line = line.trim();
-
-        if (line.endsWith(";")) {
-            line = line.substring(0, line.length() - 1).trim();
-            String[] tokens = line.split("\\s+");
-
-            if (tokens.length == 2 && isType(tokens[0]) && isIdentifier(tokens[1])) {
-                return "Declaración de variable " + tokens[0];
-            } else if (tokens.length == 4 && isType(tokens[0]) && isIdentifier(tokens[1]) && tokens[2].equals("=") && isValue(tokens[3])) {
-                return "Inicialización de variable " + tokens[0];
-            }
-        } else if (line.endsWith(")") && line.contains("(") && line.contains(")") ) {
-            String[] tokens = line.split("\\s+");
-            
-            if (tokens.length >= 2 && tokens[0].equals("public") && isIdentifier(tokens[1]) && line.contains("{") && line.contains("}")) {
-                return "Constructor";
-            } else if ((tokens[0].equals("public") || tokens[0].equals("private") || tokens[0].equals("protected"))
-                && isType(tokens[1]) && isIdentifier(tokens[2]) && line.contains("{") && line.contains("}")) {
-                return "Método";
-            }
-        } else if (line.startsWith("if") && line.contains("(") && line.contains(")") && line.contains("{") && line.contains("}")) {
-            return "Condicional";
-        } else if (line.startsWith("for") && line.contains("(") && line.contains(")") && line.contains("{") && line.contains("}")) {
-            return "Bucle for";
-        } else if (line.startsWith("while") && line.contains("(") && line.contains(")") && line.contains("{") && line.contains("}")) {
-            return "Bucle while";
-        }
-
-        return "Sintaxis incorrecta o tipo no reconocido";
-    }*/
-    
-    private boolean isType(String token) {
-        for (String palabraReservada : keywords) {
-            if (palabraReservada.equals(token)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isIdentifier(String token) {
-        // Un identificador válido empieza con una letra y puede contener letras, dígitos y '_'
-        if (token == null || token.isEmpty()) {
-            return false;
-        }
-        if (!Character.isLetter(token.charAt(0))) {
-            return false;
-        }
-        for (char c : token.toCharArray()) {
-            if (!Character.isLetterOrDigit(c) && c != '_') {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private boolean isValue(String token) {
-        // Simplificación para el ejemplo: acepta números enteros y cadenas entre comillas dobles
-        if (token.matches("\\d+")) {
-            return true; // Número entero
-        }
-        if (token.startsWith("\"") && token.endsWith("\"")) {
-            return true; // Cadena entre comillas dobles
-        }
-        return false;
+   
+    private void throwError() {
+        
     }
     
     private void setResult() {
-        
+        result = "Palabras reservadas: " + palReservada + "\n" +
+                 "Identificadores : " + identificador + "\n" +
+                 "Operadores Relacionales : " + opRelacional + "\n" +
+                 "Operadores Lógicos : " + opLogico + "\n" +
+                 "Operadores Aritmeticos : " + opAritmetico + "\n" +
+                 "Asignaciones : " + asignacion +  "\n" +
+                 "Número Entero : " + numEntero +  "\n" +
+                 "Números Decimales : " + numDecimal + "\n" +
+                 "Incremento : " + incremento + "\n" +
+                 "Decremento : " + decremento + "\n" +
+                 "Cadena de Caracteres : " + cadena + "\n" +
+                 "Comentario : " + comentario + "\n" +
+                 "Comentario de Linea : " + comentarioLinea +  "\n" +
+                 "Paréntesis : " + parentesis + "\n" +
+                 "Llaves : " + llaves + "\n" +
+                 "Errores : " + errores + "\n";
     }
     
     public String getResult() {

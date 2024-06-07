@@ -260,6 +260,9 @@ public class LexicalReader_UI extends javax.swing.JFrame {
         String text = txtPaneCode.getText();
         LexicalReader reader = new LexicalReader();
         reader.analyze(text);
+        String result = reader.getResult();
+        txtPaneTerminal.setText(result);
+        
     }//GEN-LAST:event_btnRunProjectMouseClicked
 
     private void btnCleanMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCleanMouseEntered
