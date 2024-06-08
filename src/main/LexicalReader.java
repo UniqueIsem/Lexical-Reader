@@ -75,12 +75,26 @@ public class LexicalReader {
                         token.append(c);
                     } else if (Character.isWhitespace(c)) {
                         state = 0;
+                    } else if (c == '/') {
+                        state = 5;
+                    } else if (c == '"') {
+                        state = 8;
                     } else if (specialChar.contains(c)) {
+                        if (c == '+' || c == '-') {
+                            if (i + 1 < text.length() && text.charAt(i + 1) == c) {
+                                if (c == '+') {
+                                    incremento++;
+                                } else {
+                                    decremento++;
+                                }
+                                i++;
+                                break;
+                            }
+                        }
+                        token.append(c);
                         state = 3;
-                        //i--;
-                    } else if (token.isEmpty()) {
-                        state = 4;
                     } else {
+                        errores++;
                         System.out.println("Unknown token: " + c);
                     }
                     break;
@@ -88,18 +102,15 @@ public class LexicalReader {
                 case 1: //Letters
                     if (Character.isLetterOrDigit(c) || c == '_') { //keeps iterating chars to get word
                         token.append(c);
-                    } else if (specialChar.contains(c)) { //error detecting special char
-                        errores++;
-                        System.out.println("Error: " + token.toString());
-                    } else { //full word
+                    } else {
                         if (keywords.contains(token.toString())) { //detects a keyword
                             palReservada++;
                             System.out.println("Keyword: " + token.toString());
-                        } else { //detects a identifyer
+                        } else { //detects an identifier
                             identificador++;
                             System.out.println("Identifier: " + token.toString());
                         }
-                        //reboot when its a space, tab or endline
+                        //reboot when it's a space, tab or newline
                         token.setLength(0);
                         state = 0;
                         i--; //skip space iteration
@@ -109,12 +120,18 @@ public class LexicalReader {
                 case 2: //Digits
                     if (Character.isDigit(c)) {
                         token.append(c);
-                    } else if (Character.isLetter(c) || specialChar.contains(c)) {
-                        errores++;
                     } else if (c == '.') {
-                        
+                        if (i + 1 < text.length() && Character.isDigit(text.charAt(i + 1))) {
+                            token.append(c);
+                            state = 4;
+                        } else {
+                            numEntero++;
+                            token.setLength(0);
+                            state = 0;
+                            i--;
+                        }
                     } else {
-                        System.out.println("Number: " + token.toString());
+                        numEntero++;
                         token.setLength(0);
                         state = 0;
                         i--; // Reanaliza este carácter
@@ -122,15 +139,79 @@ public class LexicalReader {
                     break;
 
                 case 3:
-                    if (c == '/') {
+                    if (c == '=' || (token.charAt(0) == '&' && c == '&') || (token.charAt(0) == '|' && c == '|')) {
                         token.append(c);
-                        
                     }
-                    // Un estado simple para manejar caracteres especiales de un solo carácter
+                    String tok = token.toString();
+                    if (tok.equals("==") || tok.equals("!=") || tok.equals(">=") || tok.equals("<=") || tok.equals("<") || tok.equals(">")) {
+                        opRelacional++;
+                    } else if (tok.equals("&&") || tok.equals("||")) {
+                        opLogico++;
+                    } else if (tok.equals("=")) {
+                        asignacion++;
+                    } else if (tok.equals("+") || tok.equals("-") || tok.equals("*") || tok.equals("/") || tok.equals("%")) {
+                        opAritmetico++;
+                    } else if (tok.equals("(") || tok.equals(")")) {
+                        parentesis++;
+                    } else if (tok.equals("{") || tok.equals("}")) {
+                        llaves++;
+                    } else {
+                        errores++;
+                    }
                     System.out.println("Special character: " + token.toString());
                     token.setLength(0);
                     state = 0;
-                    i--; // Reanaliza este carácter
+                    break;
+
+                case 4: // Decimal number
+                    if (Character.isDigit(c)) {
+                        token.append(c);
+                    } else {
+                        numDecimal++;
+                        System.out.println("Decimal number: " + token.toString());
+                        token.setLength(0);
+                        state = 0;
+                        i--; // Reanaliza este carácter
+                    }
+                    break;
+
+                case 5: // Comment or divide operator
+                    if (c == '/') {
+                        comentarioLinea++;
+                        state = 6;
+                    } else if (c == '*') {
+                        comentario++;
+                        state = 7;
+                    } else {
+                        opAritmetico++;
+                        token.append('/');
+                        i--;
+                        state = 3;
+                    }
+                    break;
+
+                case 6: // Single line comment
+                    if (c == '\n') {
+                        state = 0;
+                    }
+                    break;
+
+                case 7: // Multi line comment
+                    if (c == '*' && i + 1 < text.length() && text.charAt(i + 1) == '/') {
+                        i++;
+                        state = 0;
+                    }
+                    break;
+
+                case 8: // String literal
+                    if (c == '"') {
+                        cadena++;
+                        state = 0;
+                    } else if (c == '\\' && i + 1 < text.length() && text.charAt(i + 1) == '"') {
+                        i++; // Skip escaped quote
+                    } else if (i + 1 == text.length()) {
+                        errores++;
+                    }
                     break;
 
                 default:
@@ -150,9 +231,12 @@ public class LexicalReader {
                 System.out.println("Number: " + token.toString());
             } else if (state == 3) {
                 System.out.println("Special character: " + token.toString());
+            } else if (state == 8) {
+                errores++;
+                System.out.println("Unterminated string literal: " + token.toString());
             }
         }
-        
+
         setResult();
     }
     
