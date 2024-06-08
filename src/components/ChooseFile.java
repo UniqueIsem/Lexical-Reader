@@ -48,7 +48,7 @@ public class ChooseFile {
     }
 
     public String abrirArchivo() {
-        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos de texto (.txt)", "txt");
+        FileNameExtensionFilter filtro = new FileNameExtensionFilter("Archivos de texto (.txt)", "txt", "java");
         fileChooser.setFileFilter(filtro);
 
         frame.setVisible(true);

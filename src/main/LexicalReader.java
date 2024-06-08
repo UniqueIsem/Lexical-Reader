@@ -35,6 +35,7 @@ public class LexicalReader {
         keywords.add("continue");
         keywords.add("do");
         keywords.add("while");
+        keywords.add("print");
     }
     
     private void initSpecialCharacters() {
@@ -76,7 +77,7 @@ public class LexicalReader {
                         state = 0;
                     } else if (specialChar.contains(c)) {
                         state = 3;
-                        token.append(c);
+                        //i--;
                     } else if (token.isEmpty()) {
                         state = 4;
                     } else {
@@ -121,6 +122,10 @@ public class LexicalReader {
                     break;
 
                 case 3:
+                    if (c == '/') {
+                        token.append(c);
+                        
+                    }
                     // Un estado simple para manejar caracteres especiales de un solo carácter
                     System.out.println("Special character: " + token.toString());
                     token.setLength(0);
