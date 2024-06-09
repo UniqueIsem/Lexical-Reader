@@ -59,16 +59,33 @@ public class LexicalReader {
         specialChar.add('%');
     }
 
-    public void analyze(String text) {
-        String[] tokens = text.split("\\s+");
-        
-        for(String token : tokens) {
-            analyzeToken(token);
+   public void analyze(String text) {
+        StringBuilder tokenBuilder = new StringBuilder();
+        boolean inStringLiteral = false;
+
+        for (int i = 0; i < text.length(); i++) {
+            char currentChar = text.charAt(i);
+
+            if (Character.isWhitespace(currentChar) && !inStringLiteral) {
+                if (tokenBuilder.length() > 0) {
+                    analyzeToken(tokenBuilder.toString());
+                    tokenBuilder.setLength(0);
+                }
+            } else {
+                tokenBuilder.append(currentChar);
+                if (currentChar == '"') {
+                    inStringLiteral = !inStringLiteral;
+                }
+            }
         }
-        
+
+        if (tokenBuilder.length() > 0) {
+            analyzeToken(tokenBuilder.toString());
+        }
+
         setResult();
     }
-    
+
     private void analyzeToken(String token) {
         // Verificar palabras reservadas
         if (keywords.contains(token)) {
