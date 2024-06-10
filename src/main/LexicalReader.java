@@ -59,7 +59,7 @@ public class LexicalReader {
         specialChar.add('%');
     }
 
-   public void analyze(String text) {
+    public void analyze(String text) {
         StringBuilder tokenBuilder = new StringBuilder();
         boolean inStringLiteral = false;
 
@@ -179,10 +179,9 @@ public class LexicalReader {
                     System.out.println("Block comment: " + token);
                     return;
                 }
-
+                
                 // Si llega aquí, es un error
-                errores++;
-                System.out.println("Unknown token: " + token);
+                throwError(token);
         }
     }
 
@@ -240,8 +239,9 @@ public class LexicalReader {
         return dotCount == 1;
     }
 
-    private void throwError() {
-
+    private void throwError(String error) {
+        errores++;
+        System.out.println("Error: " + error);
     }
 
     private void setResult() {
