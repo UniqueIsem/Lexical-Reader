@@ -65,7 +65,7 @@ public class LexicalReader {
 
         for (int i = 0; i < text.length(); i++) {
             char currentChar = text.charAt(i);
-            
+
             //if current character is whitespace and we are not inside a string literal
             if (Character.isWhitespace(currentChar) && !inStringLiteral) {
                 //if token isn't empty
@@ -97,23 +97,23 @@ public class LexicalReader {
         for (char currentChar : token.toCharArray()) { //analyze each char on the token char array
             previousState = state;
             state = transition(state, previousState, currentChar);
-            
+
             if (state == State.ERROR) {
                 errorFound = true;
             }
-            
+
             if (!errorFound && (state == State.IDENTIFIER || state == State.KEYWORD)) { // if state equals identifier or keyword
                 wordBuilder.append(currentChar);
             }
         }
-        
+
         if (errorFound) {
             errores++;
             System.out.println("Token que genero error: " + token);
             return; //Stop analyzing if detects an error
         }
-        
-        if (wordBuilder.length() > 0) { 
+
+        if (wordBuilder.length() > 0) {
             if (keywords.contains(wordBuilder.toString())) { //wordBuilder matches with a 'keywords' item
                 palReservada++;
                 System.out.println("Palabra reservada: " + wordBuilder);
@@ -122,9 +122,11 @@ public class LexicalReader {
                 System.out.println("Identificador: " + wordBuilder);
             }
         }
-        
+
         switch (state) {
             case ARITHMETIC_INT_DECR:
+            case ARITHMETIC_INCR_ERROR:
+            case ARITHMETIC_ERROR:
                 opAritmetico++;
                 System.out.println("Op aritmetico: " + token);
                 break;
@@ -228,6 +230,8 @@ public class LexicalReader {
                     return State.INTEGER_OR_DECIMAL;
                 } else if (currentChar == '-') {
                     return State.ARITHMETIC_INT_DECR;
+                } else if (currentChar == '*') {
+                    return State.ARITHMETIC_ERROR;
                 } else if (currentChar == '{' || currentChar == '}') {
                     return State.IS_BRACE;
                 } else if (currentChar == '(' || currentChar == ')') {
@@ -247,7 +251,7 @@ public class LexicalReader {
                 } else if (currentChar == '|') {
                     return State.LOGIC_OR;
                 } else if (currentChar == '+') {
-                    return State.INCR_OR_ERROR;
+                    return State.ARITHMETIC_INCR_ERROR;
                 } else if (currentChar == '"') {
                     return State.P_STRING;
                 } else {
@@ -259,7 +263,7 @@ public class LexicalReader {
                 } else {
                     return State.P_STRING;
                 }
-            case INCR_OR_ERROR:
+            case ARITHMETIC_INCR_ERROR:
                 if (currentChar == '+') {
                     return State.IS_INCREMENT;
                 } else {
@@ -398,6 +402,8 @@ public class LexicalReader {
         COMMENT_END,
         DIFERRENT,
         ARITHMETIC_INT_DECR,
+        ARITHMETIC_INCR_ERROR,
+        ARITHMETIC_ERROR,
         EQUAL_OR_ASSIGN,
         INTEGER_OR_DECIMAL,
         INT_DEC_NEGATIVE,
@@ -406,7 +412,6 @@ public class LexicalReader {
         MINOR_MINOREQ,
         MAJOR_MAJOREQ,
         KEYWORD,
-        INCR_OR_ERROR,
         LOGIC_AND,
         LOGIC_OR,
         P_STRING,
