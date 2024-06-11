@@ -65,21 +65,23 @@ public class LexicalReader {
 
         for (int i = 0; i < text.length(); i++) {
             char currentChar = text.charAt(i);
-
+            
+            //if current character is whitespace and we are not inside a string literal
             if (Character.isWhitespace(currentChar) && !inStringLiteral) {
+                //if token isn't empty
                 if (tokenBuilder.length() > 0) {
                     analyzeToken(tokenBuilder.toString());
                     tokenBuilder.setLength(0);
                 }
-            } else {
+            } else { //append the char into the token
                 tokenBuilder.append(currentChar);
-                if (currentChar == '"') {
+                if (currentChar == '"') { //token may be a string literal
                     inStringLiteral = !inStringLiteral;
                 }
             }
         }
 
-        if (tokenBuilder.length() > 0) {
+        if (tokenBuilder.length() > 0) { //necessary????
             analyzeToken(tokenBuilder.toString());
         }
 
@@ -89,25 +91,35 @@ public class LexicalReader {
     private void analyzeToken(String token) {
         State state = State.START;
         State previousState = State.START;
-        StringBuilder identifierBuilder = new StringBuilder();
+        StringBuilder wordBuilder = new StringBuilder();
+        boolean errorFound = false;
 
-        for (int i = 0; i < token.length(); i++) {
-            char currentChar = token.charAt(i);
+        for (char currentChar : token.toCharArray()) { //analyze each char on the token char array
             previousState = state;
             state = transition(state, previousState, currentChar);
             
-            if (state == State.IDENTIFIER || state == State.KEYWORD) {
-                identifierBuilder.append(currentChar);
+            if (state == State.ERROR) {
+                errorFound = true;
+            }
+            
+            if (!errorFound && (state == State.IDENTIFIER || state == State.KEYWORD)) { // if state equals identifier or keyword
+                wordBuilder.append(currentChar);
             }
         }
         
-        if (identifierBuilder.length() > 0) {
-            if (keywords.contains(identifierBuilder.toString())) {
+        if (errorFound) {
+            errores++;
+            System.out.println("Token que genero error: " + token);
+            return; //Stop analyzing if detects an error
+        }
+        
+        if (wordBuilder.length() > 0) { 
+            if (keywords.contains(wordBuilder.toString())) { //wordBuilder matches with a 'keywords' item
                 palReservada++;
-                System.out.println("Keyword: " + identifierBuilder);
+                System.out.println("Palabra reservada: " + wordBuilder);
             } else {
                 identificador++;
-                System.out.println("Identifier: " + identifierBuilder);
+                System.out.println("Identificador: " + wordBuilder);
             }
         }
         
@@ -238,6 +250,8 @@ public class LexicalReader {
                     return State.INCR_OR_ERROR;
                 } else if (currentChar == '"') {
                     return State.P_STRING;
+                } else {
+                    return State.ERROR; //char not valid on initial state
                 }
             case P_STRING:
                 if (currentChar == '"') {
@@ -285,7 +299,7 @@ public class LexicalReader {
                 if (Character.isLetterOrDigit(currentChar) || currentChar == '_') {
                     return State.IDENTIFIER;
                 } else {
-                    return State.ERROR;
+                    return State.ERROR; //invalid char at identifier
                 }
             case INTEGER_OR_DECIMAL:
                 if (Character.isDigit(currentChar)) {
